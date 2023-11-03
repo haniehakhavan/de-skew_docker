@@ -25,8 +25,8 @@ Follow these steps to set up and run the Deskew Image Processing Service:
 1. Clone the repository to your local machine:
 
    ```bash
-   git clone https://github.com/yourusername/deskew-image-processing.git
-   cd deskew-image-processing
+   git clone https://github.com/haniehakhavan/de-skew_docker.git
+   cd de-skew_docker
 
 ### Building and Running
 
