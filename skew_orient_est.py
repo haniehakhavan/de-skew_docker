@@ -3,8 +3,8 @@ import numpy as np
 import onnxruntime
 
 # Load the ONNX model
-skew_model = onnxruntime.InferenceSession("models/regression0.onnx")
-orientation_model = onnxruntime.InferenceSession("/models/classification0.onnx")
+skew_model = onnxruntime.InferenceSession("./models/regression0.onnx")
+orientation_model = onnxruntime.InferenceSession("./models/classification0.onnx")
 
 def preprocess_image(image):
     image = image.astype(np.float32) / 127.5 - 1  # Apply the same normalization as during training

@@ -1,25 +1,40 @@
+import os
+
 import cv2
-from flask import Flask, request
+from flask import Flask, request, jsonify
 
 
 import skew_orient_est
 import rotate
 
-app = Flask(__name)
+app = Flask(__name__)
+# Set the upload folder
+UPLOAD_FOLDER = 'uploads'
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 
 
 @app.route('/deskew', methods=['POST'])
 def deskew():
-    # Ensure the request contains an image file
     if 'image' not in request.files:
-        return {"status": "No image provided."}
+        return jsonify({'error': 'No file part'})
 
-    # Read the image from the request
-    image_file = request.files['image']
-    original_filename = image_file.filename
+    file = request.files['image']
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'})
 
-    org_image = cv2.imdecode(np.frombuffer(image_file.read(), np.uint8), cv2.IMREAD_COLOR)
-    # org_image = cv2.imread(image_path)
+    if file:
+   	image_name = file.filename
+        filename = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+        file.save(filename)
+
+        # Read the uploaded image using OpenCV
+        org_image = cv2.imread(filename)
+        
+        if image is None:
+            return jsonify({'error': 'Failed to read the uploaded image'})
+
     image = cv2.cvtColor(org_image, cv2.COLOR_BGR2GRAY)
     image = cv2.resize(image, (224, 224))
     orientation = skew_orient_est.orientation_estimate(image)
@@ -34,7 +49,7 @@ def deskew():
     skew = skew_orient_est.skew_estimate(image)
     final_skew = degree + (-skew)
     deskewed_image = rotate.rotate_image(org_image, final_skew)
-    save_path = os.path.join("/data", original_filename)
+    save_path = os.path.join("/data", image_name)
     cv2.imwrite(save_path, deskewed_image)
     return {"status": "success."}
 
