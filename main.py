@@ -3,7 +3,6 @@ import os
 import cv2
 from flask import Flask, request, jsonify
 
-
 import skew_orient_est
 import rotate
 
@@ -12,7 +11,6 @@ app = Flask(__name__)
 UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
 
 
 @app.route('/deskew', methods=['POST'])
@@ -25,16 +23,16 @@ def deskew():
         return jsonify({'error': 'No selected file'})
 
     if file:
-   	image_name = file.filename
         filename = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
         file.save(filename)
 
         # Read the uploaded image using OpenCV
         org_image = cv2.imread(filename)
-        
-        if image is None:
+
+        if org_image is None:
             return jsonify({'error': 'Failed to read the uploaded image'})
 
+    image_name = filename.split("/")[-1]
     image = cv2.cvtColor(org_image, cv2.COLOR_BGR2GRAY)
     image = cv2.resize(image, (224, 224))
     orientation = skew_orient_est.orientation_estimate(image)
