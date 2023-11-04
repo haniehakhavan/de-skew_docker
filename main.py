@@ -37,8 +37,8 @@ def deskew():
     image = cv2.resize(image, (224, 224))
     orientation = skew_orient_est.orientation_estimate(image)
     orientation_degree_dict = {"down": 180,
-                               "left": 90,
-                               "right": -90,
+                               "left": -90,
+                               "right": 90,
                                "up": 0}
     degree = orientation_degree_dict[orientation]
     if degree != 0:
